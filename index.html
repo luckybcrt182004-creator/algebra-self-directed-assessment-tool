@@ -1,344 +1,155 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Assessment Tool</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js" 
-            onload="renderMathInElement(document.body);"></script>
-    <style>
-        body { font-family: sans-serif; line-height: 1.6; padding: 20px; max-width: 800px; margin: auto; }
-        .q-card { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
-        .hidden { display: none; }
-        button { background: #28a745; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; }
-    </style>
-</head>
-<body>
-    <h1>Self-Directed Math Assessment</h1>
-    <div id="quiz"></div>
-    <button id="submit-btn" onclick="checkScore()">Submit Assessment</button>
-    
-    <div id="result" class="hidden">
-        <h2>Your Results</h2>
-        <p id="score-text"></p>
-        <button onclick="location.reload()">Restart</button>
-    </div>
+const quizData = {
 
-    <script src="script.js"></script>
-</body>
-</html>
-const quizData = [
-    { q: "What is the property of equality is used when $a = b$ then $b = a$?", a: "B", options: ["Reflexive", "Symmetric", "Transitive", "Commutative"] },
-    { q: "Which point will make the relation not a function? Given: (3,7), (2,4), (5,2), (6,3)", a: "B", options: ["(10,12)", "(3,12)", "(9,12)", "(8,7)"] },
-    { q: "It is a statement which expresses that two numbers or algebraic expressions are equal.", a: "B", options: ["Linear", "Equation", "Expression", "Equivalent"] },
-    { q: "All of the following are linear equation EXCEPT:", a: "A", options: ["$5 + y \\neq 10$", "$3x - 6 = 21$", "$3(x - 3) = 81$", "$7x + 8 = 72$"] },
-    { q: "Does {(1, 4), (2, 5), (3, 5), (6, 6), (1, 9)}, a function or not a function?", a: "B", options: ["A function", "Not a function", "Not enough information", "It is not a relation"] },
-    { q: "If $y = f(x)$ is a function, then $x$ is called ____?", a: "A", options: ["input", "output", "function", "name of a function"] },
-    { q: "What do you call a relation in which each element of the domain is paired with exactly one element of the range?", a: "C", options: ["A relation", "An ellipse", "A function", "Not a function"] },
-    { q: "What is the first step to solving $a^2+10a+21=0$ by completing the square?", a: "D", options: ["Add $a^2$ and $10a$ together", "Set the equation equal to zero", "Divide 21 to both sides", "Apply addition property to eliminate 21"] },
-    { q: "What property of equality would I use to solve this equation? $7 + x = 14$", a: "B", options: ["Division Property", "Addition Property", "Substitution Property", "Transitive Property"] },
-    { q: "Identify the property you would use to solve this equation: $4x = 72$", a: "B", options: ["Addition Property", "Division Property", "Subtraction Property", "Multiplication Property"] }
-];
+q1: {
+correct: "B",
+explanations: {
+A: "Incorrect. Reflexive means a = a. Counterexample: If a = 3, reflexive gives 3 = 3, not b = a.",
+B: "Correct! Symmetric Property states if a = b, then b = a.",
+C: "Incorrect. Transitive Property needs three equalities (if a=b and b=c, then a=c).",
+D: "Incorrect. Commutative Property applies to operations, not equality."
+}
+},
+<div class="explanation" id="exp-q1" style="display:none;"></div>
+const explanationBox = document.getElementById("exp-" + question);
 
-const quizContainer = document.getElementById('quiz');
+q2: {
+correct: "B",
+explanations: {
+A: "Incorrect. (10,12) has a new x-value, so it remains a function.",
+B: "Correct! x = 3 already maps to 7; assigning another output breaks the function rule.",
+C: "Incorrect. (9,12) has a new x-value, valid.",
+D: "Incorrect. (8,7) has a new x-value, valid."
+}
+},
 
-// Build the Quiz
-quizData.forEach((item, index) => {
-    const card = document.createElement('div');
-    card.className = 'q-card';
-    card.innerHTML = `
-        <p><strong>${index + 1}.</strong> ${item.q}</p>
-        ${item.options.map((opt, i) => `
-            <label>
-                <input type="radio" name="q${index}" value="${String.fromCharCode(65 + i)}">
-                ${String.fromCharCode(65 + i)}. ${opt}
-            </label><br>
-        `).join('')}
-    `;
-    quizContainer.appendChild(card);
-});
+q3: {
+correct: "B",
+explanations: {
+A: "Incorrect. Table A shows x = 1 mapping to 5 and -5.",
+B: "Correct! Each x-value has exactly one y-value.",
+C: "Technically valid, but based on the answer key, B is the expected answer.",
+D: "Incorrect. x = -4 maps to 0 and -2."
+}
+},
 
-function checkScore() {
-    let score = 0;
-    quizData.forEach((item, index) => {
-        const selected = document.querySelector(`input[name="q${index}"]:checked`);
-        if (selected && selected.value === item.a) score++;
-    });
+q4: {
+correct: "B",
+explanations: {
+A: "Incorrect. Linear refers to degree 1 equations.",
+B: "Correct! An equation expresses equality.",
+C: "Incorrect. An expression has no equal sign.",
+D: "Incorrect. Equivalent means equal in value, not definition."
+}
+},
 
-    document.getElementById('quiz').classList.add('hidden');
-    document.getElementById('submit-btn').classList.add('hidden');
-    document.getElementById('result').classList.remove('hidden');
-    document.getElementById('score-text').innerText = `You scored ${score} out of ${quizData.length}`;
+q5: {
+correct: "A",
+explanations: {
+A: "Correct! 5 + y ≠ 10 is an inequality, not a linear equation.",
+B: "Incorrect. 3x – 6 = 21 is a linear equation.",
+C: "Incorrect. 3(x – 3) = 81 is linear.",
+D: "Incorrect. 7x + 8 = 72 is linear."
+}
+},
+
+q6: {
+correct: "B",
+explanations: {
+A: "Incorrect. Input 1 maps to two outputs (4 and 9).",
+B: "Correct! A function requires unique output for each input.",
+C: "Incorrect. The relation is complete.",
+D: "Incorrect. It is clearly a relation."
+}
+},
+
+q7: {
+correct: "A",
+explanations: {
+A: "Correct! Curve A passes the vertical line test.",
+B: "Incorrect. Curve B fails the vertical line test.",
+C: "Incorrect. Not all curves pass.",
+D: "Incorrect. Too broad; not all pass."
+}
+},
+
+q8: {
+correct: "A",
+explanations: {
+A: "Correct! x is the input.",
+B: "Incorrect. y is the output.",
+C: "Incorrect. The function is the rule.",
+D: "Incorrect. The name is f."
+}
+},
+
+q9: {
+correct: "C",
+explanations: {
+A: "Incorrect. Too general.",
+B: "Incorrect. An ellipse is a shape.",
+C: "Correct! A function assigns one output per input.",
+D: "Incorrect. This contradicts the definition."
+}
+},
+
+q10: {
+correct: "C",
+explanations: {
+A: "Incorrect. Range does not match graph.",
+B: "Incorrect. Domain mismatch.",
+C: "Correct! Domain is x > -2 and range is y < 1.",
+D: "Incorrect. Both domain and range incorrect."
+}
+},
+
+q11: {
+correct: "D",
+explanations: {
+A: "Incorrect. That is not structured properly.",
+B: "Incorrect. It is already set to zero.",
+C: "Incorrect. Dividing 21 is not the first step.",
+D: "Correct! Apply addition property to eliminate 21 first."
+}
+},
+
+q12: {
+correct: "A",
+explanations: {
+A: "Correct! The graph shows multiple outputs for the same x-value.",
+B: "Incorrect. This graph passes vertical line test.",
+C: "Incorrect. This graph is a function.",
+D: "Incorrect. This graph is a function."
+}
+},
+
+q13: {
+correct: "B",
+explanations: {
+A: "Incorrect. Division Property is not used here.",
+B: "Correct! Subtracting 7 uses the Addition Property of Equality.",
+C: "Incorrect. Substitution is not used.",
+D: "Incorrect. Transitive Property is not involved."
+}
+},
+
+q14: {
+correct: "B",
+explanations: {
+A: "Incorrect. Addition is not used.",
+B: "Correct! Division Property isolates the variable.",
+C: "Incorrect. Subtraction not applied.",
+D: "Incorrect. Multiplication not applied."
+}
+},
+
+q15: {
+correct: "A",
+explanations: {
+A: "Correct! Domain is {-4, -1, 0, 2, 5} and Range is {-2, 0, 1, 5}.",
+B: "Incorrect. Domain or range values are wrong.",
+C: "Incorrect. Domain or range values are incorrect.",
+D: "Incorrect. Domain or range values are incorrect."
+}
 }
 
-// Append these to your existing quizData array
-const additionalItems = [
-    { 
-        q: "What is the first step to solving $a^2+10a+21=0$ equation by completing the square?", 
-        a: "D", 
-        options: ["Add $a^2$ and $10a$ together", "Set the equation equal to zero", "Divide 21 to both sides", "Apply addition property to eliminate 21 on the left side"] 
-    }, // [cite: 54, 58, 124]
-    { 
-        q: "Which of the following is NOT a function?", 
-        a: "C", 
-        options: ["Linear Graph", "Parabola (Vertical)", "Graph with multiple outputs for same x", "Horizontal Line"] 
-    }, // [cite: 59, 124]
-    { 
-<img src="path/to/image.png">
-        q: "What property of equality would I use to solve this equation? $7 + x = 14$", 
-        a: "B", 
-        options: ["Division Property Equality", "Addition Property Equality", "Substitution Property Equality", "Transitive Property Equality"] 
-    }, // [cite: 61, 63, 124]
-    { 
-        q: "Identify the property you would use to solve this equation: $4x = 72$", 
-        a: "A", 
-        options: ["Addition Property of Equality", "Division Property of Equality", "Subtraction Property of Equality", "Multiplication Property of Equality"] 
-    }, // [cite: 64, 65, 124]
-    { 
-        q: "Which of the following gives the correct domain and range for the relation: {(1,0), (0,2), (5,-4), (-2,-1), (1,5)}?", 
-        a: "A", 
-        options: ["Domain: {-4, -1, 0, 2, 5}; Range: {-2, 0, 1, 5}", "Domain: {-5, -2, 0, 1, 4}; Range: {-5, -1, 0, 2}", "Domain: {-5, -1, 0, 2}; Range: {-5, -2, 0, 1, 4}", "Domain: {-2, 0, 1, 5}; Range: {-4, -1, 0, 2, 5}"] 
-    }, // [cite: 67, 68, 72, 124]
-    { 
-        q: "Find the range of the function $h(w) = 19 - 3w$ if the domain is {-4, -1, 2, 5}", 
-        a: "B", 
-        options: ["{-34, -25, -16, -7}", "{7, 15, 25, 34}", "{4, 13, 22, 31}", "{-5, -2, 1, 4}"] 
-    }, // [cite: 73, 75, 124]
-    { 
-        q: "Determine whether $f(x) = x^4 - x^3$ is even, odd or neither.", 
-        a: "A", 
-        options: ["odd", "even", "neither", "cannot be determined"] 
-    }, // [cite: 76, 77, 124]
-    { 
-        q: "Give the domain and range of the relation: {(11, -3), (2, -2), (2, 0), (6, 2), (18, 4)}", 
-        a: "D", 
-        options: ["Domain: {-3, -2, 2, 4}; Range: {11, 6, 2, 18}", "Domain: {11, 2, 6, 18}; Range: {-3, -2, 2, 4}", "Domain: {-3, -2, 0, 2, 4}; Range: {11, 6, 2, 18}", "Domain: {2, 6, 11, 18}; Range: {-3, -2, 0, 2, 4}"] 
-    }, // [cite: 79, 83, 124]
-    { 
-        q: "The solution of $2y + 9 = 4$ is:", 
-        a: "D", 
-        options: ["$9/2$", "$4/9$", "$-2/5$", "$-5/2$"] 
-    }, // [cite: 84, 85, 124]
-    { 
-        q: "The solution of $2x - 3 = 7$ is:", 
-        a: "A", 
-        options: ["5", "7", "12", "-12"] 
-    } // [cite: 86, 87, 124]
-];
-
-// Combine the arrays
-const fullQuizData = [...quizData, ...additionalItems];
-
-const items21to30 = [
-    { 
-        q: "Which of the following is a solution to the equation $x + 8 = 2x - 4$?", 
-        a: "C", 
-        options: ["4", "-4", "12", "-12"] 
-    }, // [cite: 88, 124]
-    { 
-        q: "The domain of $f(x) = (x^2 - x^4)$ is [0, 4].", 
-        a: "B", 
-        options: ["Always true", "Sometimes true", "Never true", "Not enough information"] 
-    }, // [cite: 90, 124]
-    { 
-        q: "Analyze the equation $5(x - 2) = 3x + 4$. What is the solution set?", 
-        a: "D", 
-        options: ["{3}", "{4}", "{5}", "{7}"] 
-    }, // [cite: 93, 124]
-    { 
-        q: "Evaluate $f(x) = 2x^2 + 1$ for $f(-3)$", 
-        a: "C", 
-        options: ["-17", "-11", "19", "37"] 
-    }, // [cite: 95, 124]
-    { 
-        q: "Which of the following is a solution to the equation $x^2 - 9 = 0$ using the square root property?", 
-        a: "C", 
-        options: ["x = -3", "x = 3", "x = \\pm3", "x = 9"] 
-    }, // [cite: 97, 124]
-    { 
-        q: "Solve Using the Quadratic Formula: $2x^2 + 7x - 15 = 0$", 
-        a: "B", 
-        options: ["3 or 5", "-5 or 2", "7 or 5", "No Solution"] 
-    }, // [cite: 100, 124]
-    { 
-        q: "Select each ordered pair that is a member of the function $h(n) = 3n^2 - n$.", 
-        a: "B", 
-        options: ["(-5, 8)", "(3, 42)", "(3, 6)", "(-2, 14)"] 
-    }, // [cite: 102, 124]
-    { 
-        q: "Rationalizing $\\frac{1}{\\sqrt{2} - \\sqrt{3}}$ gives:", 
-        a: "B", 
-        options: ["$2 + \\sqrt{3}-1$", "$\\frac{\\sqrt{2} - \\sqrt{3}}{\\sqrt{2} + \\sqrt{3}}$", "$6\\sqrt{3}$", "$2 + \\sqrt{3}1$"] 
-    }, // [cite: 104, 124]
-    { 
-        q: "Simplify: $\\sqrt{8k^6q^8}$", 
-        a: "D", 
-        options: ["$2k^3q^4\\sqrt{2}$", "$2\\sqrt{2}k^2|k|q^8$", "$2\\sqrt{2}k^2|k|q^4$", "$2\\sqrt{2}k^3q^4$"] 
-    }, // [cite: 106, 124]
-    { 
-        q: "If $f(x) = 2x - 1$, then $f(3x + 4) = _______$", 
-        a: "A", 
-        options: ["$6x + 7$", "$3x$", "$6x + 11$", "$9x + 15$"] 
-    } // [cite: 108, 124]
-];
-
-// Combine with your previous data
-const updatedQuizData = [...fullQuizData, ...items21to30];
-
-const items31to35 = [
-    { 
-        q: "Which point is a solution to $y = -x - 3$?", 
-        a: "A", 
-        options: ["{(-2, -1)}", "{(-1, 2)}", "{(0, 0)}", "{(-3, -3)}"] 
-    }, // [cite: 110, 111, 124]
-    { 
-        q: "Which of the following is the result when we simplify $(2\\sqrt{8} + 3\\sqrt{5})(6\\sqrt{8} + 7\\sqrt{5})$?", 
-        a: "C", 
-        options: ["195\\sqrt{10}", "201 + 64\\sqrt{10}", "$12\\sqrt{8} + 32\\sqrt{40} + 21\\sqrt{5}$", "$12\\sqrt{64} + 14\\sqrt{40} + 18\\sqrt{40} + 21\\sqrt{25}$"] 
-    }, // [cite: 112, 113, 114, 124]
-    { 
-        q: "The function $f(x) = -x^5 - 3$ is the inverse function of $f(x) = 3 - x - 3$.", 
-        a: "B", 
-        options: ["True", "False", "Not enough information", "The functions are inverses only for some values of $x$"] 
-    }, // [cite: 115, 116, 117, 124]
-    { 
-        q: "Evaluate $f(x) = x^2 - 1$, when $f(x - 2)$:", 
-        a: "C", 
-        options: ["$x^2 - 3$", "$x^2 + 4$", "$x^2 - 4x + 4$", "$x^2 - 4x + 3$"] 
-    }, // [cite: 118, 119, 124]
-    { 
-        q: "Simplify the expression: $4\\sqrt{5b} + 4\\sqrt{20b} - 2\\sqrt{125b}$", 
-        a: "B", 
-        options: ["$5b$", "$\\sqrt{5b}$", "$1\\sqrt{25b}$", "$(4\\sqrt{5} + 4\\sqrt{20} - 2\\sqrt{125})b$"] 
-    } // [cite: 120, 121, 124]
-];
-
-// Combine all sets for the full 35-item assessment
-const finalFullQuizData = [...updatedQuizData, ...items31to35];
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Self-Directed Assessment Tool</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; line-height: 1.6; padding: 20px; max-width: 800px; margin: auto; background-color: #f9f9f9; }
-        .q-card { background: white; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .option { display: block; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 5px; cursor: pointer; transition: 0.2s; }
-        .option:hover { background-color: #f0f0f0; }
-        .feedback { margin-top: 10px; padding: 15px; border-radius: 5px; display: none; font-size: 0.95em; }
-        .correct { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .incorrect { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .tip { font-style: italic; color: #555; margin-top: 5px; display: block; border-top: 1px solid #eee; padding-top: 5px; }
-        .hidden { display: none; }
-        .score-box { text-align: center; background: white; padding: 30px; border-radius: 10px; }
-    </style>
-</head>
-<body>
-    <h1>Math Assessment: Rationalization Tool</h1>
-    <div id="quiz-container"></div>
-    <div id="result-screen" class="hidden score-box">
-        <h2>Assessment Complete!</h2>
-        <p>Your Final Score: <span id="final-score"></span>/35</p>
-        <button onclick="location.reload()" style="padding: 10px 20px; cursor: pointer;">Restart Assessment</button>
-    </div>
-    <script src="script.js"></script>
-</body>
-</html>
-const quizData = [
-    {
-        id: 1,
-        question: "What property of equality is used when $a = b$ then $b = a$?",
-        correct: "B",
-        tip: "Symmetry is about reversing sides of equality.",
-        options: [
-            { key: "A", text: "Reflexive Property", feedback: "Incorrect. Reflexive means $a = a$. Example: $3 = 3$." },
-            { key: "B", text: "Symmetric Property", feedback: "✅ Correct. If $a = b$, then $b = a$. Example: $x = 7 \\rightarrow 7 = x$." },
-            { key: "C", text: "Transitive Property", feedback: "Incorrect. Needs three parts ($a=b, b=c \\rightarrow a=c$)." },
-            { key: "D", text: "Commutative Property", feedback: "Incorrect. Applies to operations ($2+3=3+2$), not equality." }
-        ]
-    },
-    {
-        id: 17,
-        question: "Is $f(x) = x^4 - x^3$ even, odd, or neither?",
-        correct: "A",
-        tip: "Test with positive and negative inputs to check properties quickly.",
-        options: [
-            { key: "A", text: "Odd", feedback: "✅ Correct. $f(-x) = -(f(x))$ holds true here." },
-            { key: "B", text: "Even", feedback: "Incorrect. $f(2)=8$ but $f(-2)=24$. Not equal." },
-            { key: "C", text: "Neither", feedback: "Incorrect. It satisfies the odd property." },
-            { key: "D", text: "Cannot be determined", feedback: "Incorrect. Algebraic testing provides the answer." }
-        ]
-    },
-    {
-        id: 34,
-        question: "Evaluate $f(x) = x^2 - 1$ when the input is $(x - 2)$.",
-        correct: "D",
-        tip: "Always expand carefully: $(x-2)^2 = x^2 - 4x + 4$.",
-        options: [
-            { key: "A", text: "$x^2 - 3$", feedback: "Incorrect. Misapplied substitution." },
-            { key: "B", text: "$x^2 + 4$", feedback: "Incorrect. Wrong expansion." },
-            { key: "C", text: "$x^2 - 4x + 4$", feedback: "Incorrect. Forgot to subtract the 1 from the original function." },
-            { key: "D", text: "$x^2 - 4x + 3$", feedback: "✅ Correct. $(x-2)^2 - 1 = (x^2 - 4x + 4) - 1 = x^2 - 4x + 3$." }
-        ]
-    }
-    // Note: Add all 35 items here following the structure above.
-];
-
-let score = 0;
-let answeredCount = 0;
-
-function buildQuiz() {
-    const container = document.getElementById('quiz-container');
-    quizData.forEach((item, index) => {
-        const card = document.createElement('div');
-        card.className = 'q-card';
-        card.innerHTML = `<p><strong>Item ${index + 1}:</strong> ${item.question}</p>`;
-
-        const feedbackBox = document.createElement('div');
-        feedbackBox.className = 'feedback';
-
-        item.options.forEach(opt => {
-            const btn = document.createElement('div');
-            btn.className = 'option';
-            btn.innerHTML = `<strong>${opt.key}.</strong> ${opt.text}`;
-            
-            btn.onclick = () => {
-                if (card.classList.contains('locked')) return;
-                card.classList.add('locked');
-                
-                feedbackBox.style.display = 'block';
-                feedbackBox.innerHTML = `${opt.feedback} <span class="tip"><strong>Tip:</strong> ${item.tip}</span>`;
-                
-                if (opt.key === item.correct) {
-                    btn.classList.add('correct');
-                    score++;
-                } else {
-                    btn.classList.add('incorrect');
-                }
-                
-                answeredCount++;
-                if (answeredCount === quizData.length) {
-                    setTimeout(showResults, 1000);
-                }
-            };
-            card.appendChild(btn);
-        });
-        card.appendChild(feedbackBox);
-        container.appendChild(card);
-    });
-}
-
-function showResults() {
-    document.getElementById('quiz-container').classList.add('hidden');
-    document.getElementById('result-screen').classList.remove('hidden');
-    document.getElementById('final-score').innerText = score;
-}
-
-buildQuiz();
+};
